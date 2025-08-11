@@ -10,3 +10,7 @@
   - Animation (duration, curve, scale)
   - Height, padding, and elevation
 - Supports hover effect for Web/Desktop.
+
+## 0.0.2
+- Documentation added.
+- Updated old parts of the code.

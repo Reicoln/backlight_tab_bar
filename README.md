@@ -7,7 +7,7 @@
 
 ---
 
-## 📸 Preview
+<!-- ## 📸 Preview -->
 
 <!-- *(Add your GIF or image here)*  
 Example:  
@@ -21,7 +21,7 @@ Add the dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  backlight_tab_bar: ^0.0.1
+  backlight_tab_bar: ^0.0.2
 ```
 
 Import it in your Dart file:
