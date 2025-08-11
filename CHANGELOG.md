@@ -1,10 +1,12 @@
-# Changelog
+
+## **CHANGELOG.md**
 
 ## 0.0.1
-
 - Initial release.
-- Added `BacklightTabBar` widget with:
-    - Smooth animated highlight effect.
-    - Configurable colors, height, and text visibility.
-    - Support for `TabItem` with selected/unselected icons and labels.
-- Included basic usage example in README.
+- Added `BacklightTabBar` with animated highlight effects.
+- Customizable:
+  - Icons (selected/unselected)
+  - Colors (icons, text, borders, highlights)
+  - Animation (duration, curve, scale)
+  - Height, padding, and elevation
+- Supports hover effect for Web/Desktop.
