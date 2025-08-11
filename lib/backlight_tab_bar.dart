@@ -1,16 +1,74 @@
 import 'package:flutter/material.dart';
 
+/// A customizable and animated tab bar widget with a "backlight" effect
+/// for the selected item.
+///
+/// [BacklightTabBar] provides a bottom navigation bar where the active tab
+/// features a top border and a gradient background, creating a glowing effect.
+///
+/// ### Example:
+/// ```dart
+/// BacklightTabBar(
+///   currentIndex: _selectedIndex,
+///   onTap: (index) => setState(() => _selectedIndex = index),
+///   items: [
+///     BacklightTabBarItem(
+///       unselectedIcon: Icons.home_outlined,
+///       selectedIcon: Icons.home,
+///       title: Text('Home'),
+///     ),
+///     BacklightTabBarItem(
+///       unselectedIcon: Icons.search,
+///       selectedIcon: Icons.search_sharp,
+///       title: Text('Search'),
+///     ),
+///   ],
+/// )
+/// ```
 class BacklightTabBar extends StatelessWidget {
+  /// The index of the currently selected tab.
   final int currentIndex;
+
+  /// The list of [BacklightTabBarItem]s to display in the tab bar.
   final List<BacklightTabBarItem> items;
+
+  /// The callback function that is called when a tab is tapped.
+  /// It passes the index of the tapped tab.
   final ValueChanged<int> onTap;
+
+  /// The height of the tab bar.
+  ///
+  /// Defaults to `70.0`.
   final double height;
+
+  /// The background color of the tab bar.
+  ///
+  /// Defaults to `const Color(0xFF191919)`.
   final Color backgroundColor;
+
+  /// The duration of the animation when switching between tabs.
+  ///
+  /// Defaults to `const Duration(milliseconds: 400)`.
   final Duration duration;
+
+  /// The animation curve used for the tab transition.
+  ///
+  /// Defaults to `Curves.linear`.
   final Curve curve;
+
+  /// The elevation of the widget, which determines the shadow.
+  ///
+  /// Defaults to `8.0`.
   final double elevation;
+
+  /// The padding around the entire tab bar.
+  ///
+  /// Defaults to `EdgeInsets.zero`.
   final EdgeInsets padding;
 
+  /// Creates a [BacklightTabBar] widget.
+  ///
+  /// The [currentIndex], [items], and [onTap] parameters are required.
   BacklightTabBar({
     super.key,
     required this.currentIndex,
@@ -22,8 +80,9 @@ class BacklightTabBar extends StatelessWidget {
     this.curve = Curves.linear,
     this.elevation = 8,
     this.padding = EdgeInsets.zero,
-  })  : assert(items.isNotEmpty),
-        assert(currentIndex >= 0 && currentIndex < items.length);
+  })  : assert(items.isNotEmpty, 'The items list cannot be empty.'),
+        assert(currentIndex >= 0 && currentIndex < items.length,
+            'The currentIndex must be within the bounds of the items list.');
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +96,7 @@ class BacklightTabBar extends StatelessWidget {
           child: Row(
             children: List.generate(
               items.length,
-                  (index) => Expanded(
+              (index) => Expanded(
                 child: _BacklightTabItemWidget(
                   item: items[index],
                   selected: currentIndex == index,
@@ -55,6 +114,7 @@ class BacklightTabBar extends StatelessWidget {
   }
 }
 
+/// An internal private widget representing a single item in the tab bar.
 class _BacklightTabItemWidget extends StatelessWidget {
   final BacklightTabBarItem item;
   final bool selected;
@@ -78,39 +138,40 @@ class _BacklightTabItemWidget extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: InkWell(
         onTap: onTap,
-        highlightColor: item.highlightColor.withOpacity(0.6),
-        splashColor: item.splashColor.withOpacity(0.4),
-        hoverColor: item.hoverColor.withOpacity(0.6),
+highlightColor: item.highlightColor.withValues(alpha: 0.6),
+splashColor: item.splashColor.withValues(alpha: 0.4),
+hoverColor: item.hoverColor.withValues(alpha: 0.6),
         child: AnimatedContainer(
           height: height,
           duration: duration,
           curve: curve,
-          transform: Matrix4.identity()..scale(selected ? item.selectedScale : 1.0),
+          transform: Matrix4.identity()
+            ..scale(selected ? item.selectedScale : 1.0),
           decoration: BoxDecoration(
             border: selected
                 ? Border(
-              top: BorderSide(
-                color: item.borderColor,
-                width: item.borderWidth,
-              ),
-            )
+                    top: BorderSide(
+                      color: item.borderColor,
+                      width: item.borderWidth,
+                    ),
+                  )
                 : const Border(
-              top: BorderSide(color: Colors.transparent, width: 0),
-            ),
+                    top: BorderSide(color: Colors.transparent, width: 0),
+                  ),
             gradient: selected
                 ? LinearGradient(
-              colors: [
-                item.backgroundShadowColor.withOpacity(0.5),
-                Colors.transparent,
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            )
+                    colors: [
+                      item.backgroundShadowColor.withValues(alpha: 0.5),
+                      Colors.transparent,
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  )
                 : const LinearGradient(
-              colors: [Colors.transparent, Colors.transparent],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
+                    colors: [Colors.transparent, Colors.transparent],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -118,11 +179,14 @@ class _BacklightTabItemWidget extends StatelessWidget {
               Icon(
                 selected ? item.selectedIcon : item.unselectedIcon,
                 size: selected ? item.size : item.size - 5,
-                color: selected ? item.selectedIconColor : item.unselectedIconColor.withOpacity(0.5),
+                color: selected
+                  ? item.selectedIconColor
+                  : item.unselectedIconColor.withValues(alpha: 0.5),
               ),
               if ((item.showTextAlways || selected) && item.title != null) ...[
                 const SizedBox(height: 4),
-                _buildTitleWidget(item.title!, selected, item.selectedTitleColor, item.unselectedTitleColor),
+                _buildTitleWidget(item.title!, selected,
+                    item.selectedTitleColor, item.unselectedTitleColor),
               ],
             ],
           ),
@@ -131,17 +195,21 @@ class _BacklightTabItemWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildTitleWidget(
-      Widget title, bool selected, Color? selectedColor, Color? unselectedColor) {
+  /// Builds the title widget, applying the correct color based on the `selected` state.
+  Widget _buildTitleWidget(Widget title, bool selected, Color? selectedColor,
+      Color? unselectedColor) {
     if (title is Text) {
       final Text originalText = title;
       final TextStyle? originalStyle = originalText.style;
       final Color? colorToApply = selected ? selectedColor : unselectedColor;
 
+      // Return a new Text widget with the applied color,
+      // preserving all other properties of the original Text.
       return Text(
         originalText.data ?? '',
         key: originalText.key,
-        style: (originalStyle ?? const TextStyle()).copyWith(color: colorToApply),
+        style:
+            (originalStyle ?? const TextStyle()).copyWith(color: colorToApply),
         strutStyle: originalText.strutStyle,
         textAlign: originalText.textAlign,
         textDirection: originalText.textDirection,
@@ -155,29 +223,100 @@ class _BacklightTabItemWidget extends StatelessWidget {
         textHeightBehavior: originalText.textHeightBehavior,
       );
     } else {
+      // If the title is not a Text widget, return it as is.
       return title;
     }
   }
 }
 
+/// A data model for a single item in the [BacklightTabBar].
+///
+/// This class holds all styling and behavioral information for one tab,
+/// including icons, colors, text, and animations.
 class BacklightTabBarItem {
+  /// The icon for the unselected state.
+  ///
+  /// Defaults to `Icons.star_border_outlined`.
   final IconData unselectedIcon;
+
+  /// The icon for the selected state.
+  ///
+  /// Defaults to `Icons.star`.
   final IconData selectedIcon;
+
+  /// The base size of the icon. The size for an unselected icon will be `size - 5`.
+  ///
+  /// Defaults to `30.0`.
   final double size;
+
+  /// The color of the icon in its selected state.
+  ///
+  /// Defaults to `Colors.white`.
   final Color selectedIconColor;
+
+  /// The color of the icon in its unselected state.
+  ///
+  /// Defaults to `Colors.white54`.
   final Color unselectedIconColor;
+
+  /// The highlight color when the item is held down.
+  ///
+  /// Defaults to `Colors.transparent`.
   final Color highlightColor;
+
+  /// The splash color when the item is tapped.
+  ///
+  /// Defaults to `Colors.transparent`.
   final Color splashColor;
+
+  /// The color when a pointer is hovering over the item.
+  ///
+  /// Defaults to `Colors.transparent`.
   final Color hoverColor;
+
+  /// The color of the top border on the selected item.
+  ///
+  /// Defaults to `const Color(0xFF6c5ce7)`.
   final Color borderColor;
+
+  /// The width of the top border on the selected item.
+  ///
+  /// Defaults to `3.0`.
   final double borderWidth;
+
+  /// The color for the "backlight" gradient on the selected item.
+  ///
+  /// Defaults to `const Color(0xFF6c5ce7)`.
   final Color backgroundShadowColor;
+
+  /// The title widget, typically a [Text], displayed below the icon.
+  ///
+  /// Can be `null` if no title is needed.
   final Widget? title;
+
+  /// The color of the title in its selected state.
+  ///
+  /// If `null`, the color will not be changed.
   final Color? selectedTitleColor;
+
+  /// The color of the title in its unselected state.
+  ///
+  /// If `null`, the color will not be changed.
   final Color? unselectedTitleColor;
+
+  /// If `true`, the [title] will always be shown.
+  /// If `false`, it will only be visible for the selected tab.
+  ///
+  /// Defaults to `false`.
   final bool showTextAlways;
+
+  /// The scale factor applied to the item when it is selected.
+  /// A value of `1.0` means no scaling.
+  ///
+  /// Defaults to `1.0`.
   final double selectedScale;
 
+  /// Creates a configuration for a [BacklightTabBar] item.
   const BacklightTabBarItem({
     this.unselectedIcon = Icons.star_border_outlined,
     this.selectedIcon = Icons.star,
@@ -195,6 +334,6 @@ class BacklightTabBarItem {
     this.unselectedTitleColor,
     this.showTextAlways = false,
     this.selectedScale = 1.0,
-  }) : assert(size >= 7),
-        assert(borderWidth >= 1);
+  })  : assert(size >= 7, 'The icon size must be >= 7.'),
+        assert(borderWidth >= 1, 'The border width must be >= 1.');
 }

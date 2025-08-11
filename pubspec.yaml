@@ -1,5 +1,5 @@
 name: backlight_tab_bar
-description: "Backlight tab bar"
+description: "A customizable Flutter Tab_bar with animated highlight effects, smooth transitions, and flexible styling options for mobile, web, and desktop apps."
 version: 0.0.1
 homepage: https://github.com/Reicoln/backlight_tab_bar
 
